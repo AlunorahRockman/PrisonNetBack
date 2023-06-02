@@ -69,17 +69,28 @@ async function validateUser(req, res){
     }
 }
 
-const createOneUser = (req, res) => {
+const createOneUser = async (req, res) => {
     const { body } = req
     
     const { error } = usersValidation(body)
     if (error) return res.status(401).json(error.details[0].message)
 
-    User.create({ ...body })
-        .then(createdUser => {
-            res.status(201).json({ id: createdUser.get('id'), msg: 'Created Resource' })
-        })
-        .catch(error => res.status(500).json(error))
+    try {
+        const existingUser = await User.findOne({ where: { email: body.email } });
+        if (existingUser) {
+            return res.status(401).send("L'e-mail existe déjà.");
+        }
+
+        const hashedPassword = await bcrypt.hash(body.motdepasse, 10);
+
+        const createdUser = await User.create({ ...body, motdepasse: hashedPassword });
+
+        res.status(201).json({ id: createdUser.get('id'), msg: 'Resource créée avec succès' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur du serveur." });
+    }
 }
+
 
 export {createOneUser, loginUser, validateUser}

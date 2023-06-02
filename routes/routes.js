@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { loginUser, createOneUser, validateUser } from "../controllers/usersController.js"
+import { loginUser, createOneUser, validateUser} from "../controllers/usersController.js"
 import { createOnePersonnel } from "../controllers/personnelsController.js"
 import { createOneVisiteur } from "../controllers/visiteursController.js"
 import { createCode, verifierCode } from "../controllers/codesController.js"
