@@ -4,8 +4,34 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import dotenv from 'dotenv'
 import loginValidation from "../validations/loginValidation.js"
+import emailValidation from "../validations/emailValidation.js"
 
 dotenv.config({path:'.env'})
+
+async function verifierEmail(req, res){
+    const {body} = req
+
+    const {error} = emailValidation(body)
+    if(error) return res.status(401).json(error.details[0].message)
+
+    try{
+        const user = await User.findOne({
+            where: {
+                email: body.email,
+            }
+        })
+
+        if(!user){
+            return res.status(401).send("L'utilisateur n'existe pas.")
+        }
+
+        return res.status(200).send("L'utilisteur exist dans la base de donne")
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: "Erreur du serveur." });
+    }
+}
 
 async function loginUser(req, res){
     const { body } = req
@@ -16,17 +42,18 @@ async function loginUser(req, res){
     try {
         const user = await User.findOne({
             where: {
-            email: body.email,
+                email: body.email,
             },
-        }); 
+        });
+        
+        if (!user) {
+            return res.status(401).send("L'utilisateur n'existe pas.");
+        }
 
         if (!user.estValide) {
             return res.status(401).send("Le compte utilisateur n'est pas validé.");
         }
 
-        if (!user) {
-            return res.status(401).send("L'utilisateur n'existe pas.");
-        }
         const passMatch = await bcrypt.compare(body.motdepasse, user.motdepasse);
         if (!passMatch) {
             return res.status(401).send("Mot de passe incorrect.");
@@ -93,4 +120,4 @@ const createOneUser = async (req, res) => {
 }
 
 
-export {createOneUser, loginUser, validateUser}
+export {createOneUser, loginUser, validateUser, verifierEmail}
