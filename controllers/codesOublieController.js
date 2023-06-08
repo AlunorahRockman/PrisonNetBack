@@ -1,16 +1,17 @@
-import Code from "../models/code.js"
+
 import nodemailer from 'nodemailer';
 import faker from "faker"
 import User from "../models/user.js";
 import codeValidation from "../validations/codeValidation.js";
+import CodeOublie from "../models/codeOublie.js";
 
-    const createCode = async (idUser) => {
+    const createCodeOublie = async (idUser) => {
         const code = faker.random.number({ min: 10000, max: 99999 });
         console.log(code)
         try {
-            const newCode = await Code.create({ idUser, code });
+            const newCode = await CodeOublie.create({ idUser, code });
 
-            await sendCodeByEmail(idUser, code);
+            await sendCodeByEmailOublie(idUser, code);
 
             return newCode;
         } catch (error) {
@@ -19,7 +20,7 @@ import codeValidation from "../validations/codeValidation.js";
     };
 
 
-    async function sendCodeByEmail(idUser, code) {
+    async function sendCodeByEmailOublie(idUser, code) {
         try {
             // Récupérer l'utilisateur par son ID
             const user = await User.findByPk(idUser);
@@ -60,7 +61,7 @@ import codeValidation from "../validations/codeValidation.js";
         }
     }
 
-    async function  verifierCode (req, res) {
+    async function  verifierCodeOublie (req, res) {
         const { body } = req
         
         const { error } = codeValidation(body)
@@ -72,7 +73,7 @@ import codeValidation from "../validations/codeValidation.js";
             return res.status(401).send("Utilisateur non trouvé");
         }
 
-        const savedCode = await Code.findOne({
+        const savedCode = await CodeOublie.findOne({
             where: { idUser: body.idUser },
             attributes: ['code'],
         });
@@ -88,4 +89,4 @@ import codeValidation from "../validations/codeValidation.js";
         }
     }
 
-export { createCode, verifierCode }
+export { createCodeOublie, verifierCodeOublie }

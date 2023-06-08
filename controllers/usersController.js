@@ -25,7 +25,7 @@ async function verifierEmail(req, res){
             return res.status(401).send("L'utilisateur n'existe pas.")
         }
 
-        return res.status(200).send("L'utilisteur exist dans la base de donne")
+        return res.status(200).send(user)
     }
     catch (error) {
         console.error(error);
@@ -104,6 +104,7 @@ const createOneUser = async (req, res) => {
 
     try {
         const existingUser = await User.findOne({ where: { email: body.email } });
+        
         if (existingUser) {
             return res.status(401).send("L'e-mail existe déjà.");
         }
