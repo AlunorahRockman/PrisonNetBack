@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { loginUser, createOneUser, validateUser, verifierEmail} from "../controllers/usersController.js"
+import { loginUser, createOneUser, validateUser, verifierEmail, modifierMotdepasse} from "../controllers/usersController.js"
 import { createOnePersonnel } from "../controllers/personnelsController.js"
 import { createOneVisiteur } from "../controllers/visiteursController.js"
 import { createCode, verifierCode } from "../controllers/codesController.js"
@@ -14,6 +14,7 @@ router.post('/createOneVisiteur', createOneVisiteur)
 router.post('/verifierCode', verifierCode)
 router.post('/verifierCodeOublie', verifierCodeOublie)
 router.post('/verifierEmail', verifierEmail)
+router.post('/modifierMotdepasse', modifierMotdepasse)
 router.put('/validateUser/:idUser', validateUser)
 
 router.get('/createCode/:idUser', async (req, res) => {

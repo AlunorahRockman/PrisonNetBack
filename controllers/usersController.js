@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import dotenv from 'dotenv'
 import loginValidation from "../validations/loginValidation.js"
 import emailValidation from "../validations/emailValidation.js"
+import nouveauPassValidation from "../validations/nouveauPassValidation.js"
 
 dotenv.config({path:'.env'})
 
@@ -32,6 +33,35 @@ async function verifierEmail(req, res){
         return res.status(500).send({ message: "Erreur du serveur." });
     }
 }
+
+const modifierMotdepasse = async (req, res) => {
+        const { body } = req;
+        
+        const { error } = nouveauPassValidation(body);
+        if (error) return res.status(401).json(error.details[0].message);
+
+        try {
+        const user = await User.findByPk(body.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        if (body.nouveauPass !== body.confirmPass) {
+            return res.status(401).json({ message: "Le mot de passe de confirmation doit correspondre au nouveau mot de passe." });
+        }
+
+        const hashedPassword = await bcrypt.hash(body.nouveauPass, 10);
+
+        user.motdepasse = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: "Le mot de passe a été modifié avec succès." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur du serveur." });
+    }
+};
 
 async function loginUser(req, res){
     const { body } = req
@@ -104,7 +134,7 @@ const createOneUser = async (req, res) => {
 
     try {
         const existingUser = await User.findOne({ where: { email: body.email } });
-        
+
         if (existingUser) {
             return res.status(401).send("L'e-mail existe déjà.");
         }
@@ -121,4 +151,4 @@ const createOneUser = async (req, res) => {
 }
 
 
-export {createOneUser, loginUser, validateUser, verifierEmail}
+export {createOneUser, loginUser, validateUser, verifierEmail, modifierMotdepasse}
