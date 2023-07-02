@@ -65,6 +65,10 @@ const usersValidation = (body) => {
             estValide: Joi.boolean().required().messages({
                 'boolean.base': 'La valeur de estValide doit être un booléen',
                 'any.required': 'La valeur de estValide est obligatoire',
+            }),
+            estBloque: Joi.boolean().required().messages({
+                'boolean.base': 'La valeur de estBloque doit être un booléen',
+                'any.required': 'La valeur de estBlique est obligatoire',
             })
         })
     return userSchema.validate(body)

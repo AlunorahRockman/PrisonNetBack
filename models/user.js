@@ -56,6 +56,11 @@ const User = database.define('users', {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+        },
+        estBloque: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
         }
     });
 

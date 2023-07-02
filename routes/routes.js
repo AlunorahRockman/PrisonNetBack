@@ -2,8 +2,12 @@ import {Router} from "express"
 import { loginUser, createOneUser, validateUser, verifierEmail, modifierMotdepasse} from "../controllers/usersController.js"
 import { createOnePersonnel } from "../controllers/personnelsController.js"
 import { createOneVisiteur } from "../controllers/visiteursController.js"
+import { createOneAdmin } from "../controllers/adminsController.js"
+import { createOneCellule } from "../controllers/cellulesController.js"
 import { createCode, verifierCode } from "../controllers/codesController.js"
 import { createCodeOublie, verifierCodeOublie } from "../controllers/codesOublieController.js"
+import { createOneMessage } from "../controllers/messagesController.js"
+import { createOneDetenus } from "../controllers/detenusController.js"
 
 const router = Router()
 
@@ -11,6 +15,10 @@ router.post('/createOneUser', createOneUser)
 router.post('/loginUser', loginUser)
 router.post('/createOnePersonnel', createOnePersonnel)
 router.post('/createOneVisiteur', createOneVisiteur)
+router.post('/createOneAdmin', createOneAdmin)
+router.post('/createOneCellule', createOneCellule)
+router.post('/createOneMessage', createOneMessage)
+router.post('/createOneDetenus', createOneDetenus)
 router.post('/verifierCode', verifierCode)
 router.post('/verifierCodeOublie', verifierCodeOublie)
 router.post('/verifierEmail', verifierEmail)

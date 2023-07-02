@@ -25,7 +25,16 @@ const Personnel = database.define('personnels', {
         salaire: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false
+        },
+        dateEmbauche: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        statut: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false
         }
+
     })
 
 export default Personnel

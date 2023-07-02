@@ -42,7 +42,7 @@ import codeValidation from "../validations/codeValidation.js";
                 from: 'ainatolotriniavo.a@zurcher.edu.mg',
                 to: user.email, // L'adresse e-mail de l'utilisateur
                 subject: 'Votre code de 5 chiffres',
-                text: `Votre code est : ${code}`,
+                text: `Bienvenue chez prisonNet. Votre code est : ${code}`,
             };
         
             // Envoyer l'e-mail
