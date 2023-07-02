@@ -8,6 +8,11 @@ import { createCode, verifierCode } from "../controllers/codesController.js"
 import { createCodeOublie, verifierCodeOublie } from "../controllers/codesOublieController.js"
 import { createOneMessage } from "../controllers/messagesController.js"
 import { createOneDetenus } from "../controllers/detenusController.js"
+import { createOneVisite } from "../controllers/visiteController.js"
+import { createOneConge } from "../controllers/congeController.js"
+import { createOneIncident } from "../controllers/incidentsController.js"
+import { createOneVisiteurDetenus } from "../controllers/visiteurDetenusCotroller.js"
+import { createOneCelluleDetenus } from "../controllers/celluleDetenusController.js"
 
 const router = Router()
 
@@ -18,7 +23,12 @@ router.post('/createOneVisiteur', createOneVisiteur)
 router.post('/createOneAdmin', createOneAdmin)
 router.post('/createOneCellule', createOneCellule)
 router.post('/createOneMessage', createOneMessage)
+router.post('/createOneVisite', createOneVisite)
+router.post('/createOneConge', createOneConge)
 router.post('/createOneDetenus', createOneDetenus)
+router.post('/createOneIncident', createOneIncident)
+router.post('/createOneVisiteurDetenus', createOneVisiteurDetenus)
+router.post('/createOneCelluleDetenus', createOneCelluleDetenus)
 router.post('/verifierCode', verifierCode)
 router.post('/verifierCodeOublie', verifierCodeOublie)
 router.post('/verifierEmail', verifierEmail)
