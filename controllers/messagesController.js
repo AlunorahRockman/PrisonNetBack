@@ -11,4 +11,24 @@ const createOneMessage = (req, res) => {
     .catch(error => res.status(500).json(error))
 }
 
-export { createOneMessage }
+
+    const getMessages = async (req, res) => {
+        const { idRecever, idSender } = req.params;
+    
+        try {
+        const messages = await Message.findAll({
+            where: {
+                idRecever: idRecever,
+                idSender: idSender
+            }
+        });
+    
+        res.json(messages);
+        } catch (error) {
+            console.error('Error retrieving messages:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+
+export { createOneMessage, getMessages}

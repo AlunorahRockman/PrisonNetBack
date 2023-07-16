@@ -1,6 +1,6 @@
 import Joi from "joi"
 
-const usersValidation = (body) => {
+const usersModifierValidation = (body) => {
     const userSchema = Joi.object({
             nom: Joi.string().min(3).max(40).trim().required().messages({
                 'string.base': 'Le nom doit être une chaîne de caractères',
@@ -24,13 +24,6 @@ const usersValidation = (body) => {
                 'string.email': 'L\'email doit être une adresse email valide',
                 'any.required': 'L\'email est obligatoire'
             }),
-            motdepasse: Joi.string().min(8).max(10).trim().required().messages({
-                'string.base': 'Le mot de passe doit être une chaîne de caractères',
-                'string.empty': 'Le mot de passe ne doit pas être vide',
-                'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
-                'string.max': 'Le mot de passe doit contenir au plus {#limit} caractères',
-                'any.required': 'Le mot de passe est obligatoire'
-            }),
             adresse: Joi.string().min(3).max(100).trim().required().messages({
                 'string.base': 'L\'adresse doit être une chaîne de caractères',
                 'string.empty': 'L\'adresse ne doit pas être vide',
@@ -50,28 +43,9 @@ const usersValidation = (body) => {
             sexe: Joi.string().valid('M', 'F').required().messages({
                 'any.only': 'Le sexe doit être soit "M" (masculin) ou "F" (féminin)',
                 'any.required': 'Le sexe est obligatoire'
-            }),
-            image: Joi.string().allow('').optional().messages({
-                'string.base': 'L\'image doit être une chaîne de caractères',
-                'any.only': 'Le champ image doit être vide ou une chaîne de caractères',
-            }),
-            typeCompte: Joi.string().min(1).max(100).trim().required().messages({
-                'string.base': 'Le type de compte doit être une chaîne de caractères',
-                'string.empty': 'Le type de compte ne doit pas être vide',
-                'string.min': 'Le type de compte doit contenir au moins {#limit} caractères',
-                'string.max': 'Le type de compte doit contenir au plus {#limit} caractères',
-                'any.required': 'Le type de compte est obligatoire'
-            }),
-            estValide: Joi.boolean().required().messages({
-                'boolean.base': 'La valeur de estValide doit être un booléen',
-                'any.required': 'La valeur de estValide est obligatoire',
-            }),
-            estBloque: Joi.boolean().required().messages({
-                'boolean.base': 'La valeur de estBloque doit être un booléen',
-                'any.required': 'La valeur de estBloque est obligatoire',
             })
         })
     return userSchema.validate(body)
 }
 
-export default usersValidation
+export default usersModifierValidation

@@ -14,8 +14,24 @@ const Visite = database.define('visite', {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
     },
+    idDetenus: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
     dateVisite: {
         type: DataTypes.DATE,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    heure: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false
+    },
+    statut: {
+        type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
     }
 })

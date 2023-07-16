@@ -30,11 +30,11 @@ import codeValidation from "../validations/codeValidation.js";
         
             // Configurer le transporteur de messagerie
             const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: 'ainatolotriniavo.a@zurcher.edu.mg',
-                pass: process.env.MOTDEPASSE
-            },
+                service: 'Gmail',
+                auth: {
+                    user: 'ainatolotriniavo.a@zurcher.edu.mg',
+                    pass: process.env.MOTDEPASSE
+                },
             });
         
             // Configurer l'e-mail

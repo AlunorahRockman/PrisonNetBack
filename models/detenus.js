@@ -46,6 +46,10 @@ const Detenus = database.define('detenus', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     statut: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
