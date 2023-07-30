@@ -1,4 +1,6 @@
+import Detenus from "../models/detenus.js"
 import Incident from "../models/incident.js"
+import User from "../models/user.js"
 import incidentsValidation from "../validations/incidentValidation.js"
 import modifierIncidentValidation from "../validations/modifierIncidentValidation.js"
 
@@ -22,8 +24,12 @@ const getIncidentByOneUser = (req, res) => {
 
     Incident.findAll({
         where: {
-            idPersonnel: idUser,
-        }
+            userId: idUser,
+        },
+        include: [
+            { model: User },
+            { model: Detenus }
+        ]
     })
     .then(incidents => {
         res.status(200).json(incidents);
@@ -31,7 +37,8 @@ const getIncidentByOneUser = (req, res) => {
     .catch(error => res.status(500).json(error));
 };
 
-const getOneIncident = (req, res) => {
+
+const getOneIncident = (req, res) => { 
     const idUser = req.params.idUser;
 
     Incident.findByPk(idUser)
@@ -42,7 +49,12 @@ const getOneIncident = (req, res) => {
 };
 
 const getAllIncident = (req, res) => {
-    Incident.findAll()
+    Incident.findAll({
+        include: [
+            {model: User},
+            {model: Detenus}
+        ]
+    })
     .then(data => {
         res.status(200).json(data);
     })
@@ -61,7 +73,7 @@ async function updateIncident(req, res) {
         const incident = await Incident.findByPk(idUser);
 
         if (!incident) {
-            return res.status(401).json({ message: "Utilisateur non trouvé." });
+            return res.status(401).json({ message: "Incidents non trouvé." });
         }
 
         if (body.description) {
@@ -73,7 +85,7 @@ async function updateIncident(req, res) {
 
         await incident.save();
 
-        return res.status(200).json({ message: "Utilisateur mis à jour avec succès." });
+        return res.status(200).json({ message: "Incidents mis à jour avec succès." });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Erreur du serveur." });
@@ -85,15 +97,16 @@ const deleteIncident = (req, res) => {
     const { id } = req.params
 
     Incident.destroy({
-        where: {
+        where: { 
             id: id,
         }
     })
     .then(() => {
-        res.status(200).json({ message: "Incident supprimée avec succès." });
+        res.status(200).json({ message: "IncidentPers supprimée avec succès." });
     })
     .catch(error => res.status(500).json(error));
 };
 
 
-export { createOneIncident, getIncidentByOneUser, getAllIncident, getOneIncident, updateIncident, deleteIncident }
+export { createOneIncident, getIncidentByOneUser, getAllIncident, 
+    getOneIncident, updateIncident, deleteIncident }

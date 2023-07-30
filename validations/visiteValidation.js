@@ -2,11 +2,11 @@ import Joi from 'joi'
 
 const visiteValidation = (body) => {
     const visitesSchema = Joi.object({
-        idVisiteur: Joi.number().integer().required().messages({
+        visiteurId: Joi.number().integer().required().messages({
             'number.base': 'L\'idVisiteur doit être un nombre entier',
             'any.required': 'L\'idVisiteur est obligatoire'
         }),
-        idDetenus: Joi.number().integer().required().messages({
+        detenuId: Joi.number().integer().required().messages({
             'number.base': 'L\'idDetenus doit être un nombre entier',
             'any.required': 'L\'idDetenus est obligatoire'
         }),  

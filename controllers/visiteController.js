@@ -1,5 +1,8 @@
 
+import Detenus from "../models/detenus.js"
+import User from "../models/user.js"
 import Visite from "../models/visite.js"
+import Visiteur from "../models/visiteur.js"
 import modifierVisiteValidation from "../validations/modifierVisiteValidation.js"
 import visiteValidation from "../validations/visiteValidation.js"
 
@@ -34,7 +37,17 @@ const getVisiteByOneUser = (req, res) => {
 
 
 const getAllVisite = (req, res) => {
-    Visite.findAll()
+    Visite.findAll({
+        include: [
+            {
+            model: Visiteur,
+                include: [
+                    { model: User }
+                ]
+            },
+            { model: Detenus }
+        ]
+    })
     .then(data => {
         res.status(200).json(data);
     })
@@ -100,5 +113,66 @@ const deleteVisite = (req, res) => {
     .catch(error => res.status(500).json(error));
 };
 
-export { createOneVisite, getVisiteByOneUser, getAllVisite, getOneVisite, updateVisite, deleteVisite };
+
+const updateVisiteStatus = (req, res) => {
+    const { idVisite } = req.params;
+
+    Visite.findByPk(idVisite)
+        .then(visite => {
+            if (!visite) {
+                return res.status(404).json({ message: "Visite non trouvé." });
+            }
+
+            visite.statut = 1;
+
+            visite.save()
+                .then(() => {
+                    res.status(200).json({ message: "Statut de la visite mis à jour avec succès." });
+                })
+                .catch(error => res.status(500).json(error));
+        })
+        .catch(error => res.status(500).json(error));
+};
+
+
+const updateVisiteStatusReff = (req, res) => {
+    const { idVisite } = req.params;
+
+    Visite.findByPk(idVisite)
+        .then(visite => {
+            if (!visite) {
+                return res.status(404).json({ message: "Visite non trouvé." });
+            }
+
+            visite.statut = 2;
+
+            visite.save()
+                .then(() => {
+                    res.status(200).json({ message: "Statut de la visite mis à jour avec succès." });
+                })
+                .catch(error => res.status(500).json(error));
+        })
+        .catch(error => res.status(500).json(error));
+};
+
+const getMonVisite = (req, res) => {
+    const idUser = req.params.idUser;
+
+    Visite.findAll({ 
+        where: {
+            visiteurId: idUser,
+        },        
+        include: [
+            { model: Visiteur },
+            { model: Detenus }
+        ]
+    })
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch(error => res.status(500).json(error));
+};
+
+export { createOneVisite, getMonVisite, getVisiteByOneUser, getAllVisite, updateVisiteStatusReff
+    , updateVisiteStatus , getOneVisite, updateVisite, deleteVisite };
 

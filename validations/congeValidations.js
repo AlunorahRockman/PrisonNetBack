@@ -2,7 +2,7 @@ import Joi from 'joi'
 
 const congesValidation = (body) => {
     const congesSchema = Joi.object({
-        idPersonnel: Joi.number().integer().required().messages({
+        personnelId: Joi.number().integer().required().messages({
             'number.base': 'L\'idPersonnel doit être un nombre entier',
             'any.required': 'L\'idPersonnel est obligatoire'
         }),

@@ -8,6 +8,10 @@ import emailValidation from "../validations/emailValidation.js"
 import nouveauPassValidation from "../validations/nouveauPassValidation.js"
 import { Op } from 'sequelize';
 import usersModifierValidation from "../validations/modifierUserValidation.js"
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+
 
 dotenv.config({path:'.env'})
 
@@ -71,40 +75,40 @@ async function loginUser(req, res){
     const {error} = loginValidation(body)
     if (error) return res.status(401).json(error.details[0].message)
 
-    try {
-        const user = await User.findOne({
-            where: {
-                email: body.email,
-            },
-        });
-        
-        if (!user) {
-            return res.status(401).send("L'utilisateur n'existe pas.");
-        }
+        try {
+            const user = await User.findOne({
+                where: {
+                    email: body.email,
+                },
+            });
+            
+            if (!user) {
+                return res.status(401).send("L'utilisateur n'existe pas.");
+            }
 
-        if (!user.estValide) {
-            return res.status(401).send("Le compte utilisateur n'est pas validé.");
-        }
+            if (!user.estValide) {
+                return res.status(401).send("Le compte utilisateur n'est pas validé.");
+            }
 
-        const passMatch = bcrypt.compareSync(body.motdepasse, user.motdepasse);
-        if (!passMatch) {
-            return res.status(401).send("Mot de passe incorrect.");
+            const passMatch = bcrypt.compareSync(body.motdepasse, user.motdepasse);
+            if (!passMatch) {
+                return res.status(401).send("Mot de passe incorrect.");
+            }
+            const accessToken = jwt.sign(
+                { id: user.id, nom: user.nom, prenom: user.prenom, email: user.email , type_compte:user.typeCompte, adresse: user.adresse, dateNaissance: user.dateNaissance, phone: user.phone, sexe: user.sexe, image: user.image},
+                    process.env.ACCESS_SECRET,
+                { expiresIn: "5m" }
+            );
+            const refreshToken = jwt.sign(
+                { id: user.id, nom: user.nom, prenom: user.prenom, email: user.email , type_compte:user.typeCompte, adresse: user.adresse, dateNaissance: user.dateNaissance, phone: user.phone, sexe: user.sexe, image: user.image},
+                    process.env.REFRESH_SECRET,
+                { expiresIn: "24h" }
+            );
+            return res.status(200).send({ access: accessToken, refresh: refreshToken });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send({ message: "Erreur du serveur." });
         }
-        const accessToken = jwt.sign(
-            { id: user.id, nom: user.nom, prenom: user.prenom, email: user.email , type_compte:user.typeCompte, adresse: user.adresse, dateNaissance: user.dateNaissance, phone: user.phone, sexe: user.sexe, image: user.image},
-                process.env.ACCESS_SECRET,
-            { expiresIn: "5m" }
-        );
-        const refreshToken = jwt.sign(
-            { id: user.id, nom: user.nom, prenom: user.prenom, email: user.email , type_compte:user.typeCompte, adresse: user.adresse, dateNaissance: user.dateNaissance, phone: user.phone, sexe: user.sexe, image: user.image},
-                process.env.REFRESH_SECRET,
-            { expiresIn: "24h" }
-        );
-        return res.status(200).send({ access: accessToken, refresh: refreshToken });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).send({ message: "Erreur du serveur." });
-    }
 }
 
 async function validateUser(req, res){
@@ -213,6 +217,73 @@ async function updateUser(req, res) {
     }
 }
 
+const uploadDir = './images';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const fileNameWithoutExtension = req.params.nom;
+        const ext = '.jpg';
+        cb(null, fileNameWithoutExtension + ext);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+const uploadImage = (req, res, next) => {
+    upload.single('image')(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ message: err.message });
+        } else if (err) {
+            return res.status(500).json({ message: "Erreur du serveur lors du téléchargement de l'image." });
+        }
+
+        return res.status(200).json({ message: "L'image a été téléchargée avec succès." });
+    });
+};
 
 
-export {createOneUser, loginUser, validateUser, verifierEmail, modifierMotdepasse, getAllUser, updateUser}
+async function setImage(req, res) {
+    const { idUser, image } = req.params;
+
+    console.log(idUser)
+    console.log(image)
+    
+    try {
+        const user = await User.findByPk(idUser);
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        user.image = image + ".jpg";
+
+        await user.save();
+
+        return res.status(200).json({ message: "Image de l'utilisateur mise à jour avec succès." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur lors de la mise à jour de l'image de l'utilisateur." });
+    }
+}
+
+const getOneUsers = (req, res) => {
+    const idUser = req.params.idUser;
+
+    User.findByPk(idUser)
+    .then(data => {
+        res.status(200).json(data);
+    })
+    .catch(error => res.status(500).json(error));
+};
+
+
+
+
+export {createOneUser, loginUser, setImage ,validateUser, verifierEmail, getOneUsers, 
+    uploadImage, modifierMotdepasse, getAllUser, updateUser}

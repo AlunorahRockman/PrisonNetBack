@@ -2,13 +2,13 @@ import Joi from 'joi'
 
 const incidentsValidation = (body) => {
     const incidentsSchema = Joi.object({
-        idDetenus: Joi.number().integer().required().messages({
+        detenuId: Joi.number().integer().required().messages({
             'number.base': 'L\'idDetenus doit être un nombre entier',
             'any.required': 'L\'idDetenus est obligatoire'
         }),
-        idPersonnel: Joi.number().integer().required().messages({
-            'number.base': 'L\'idPersonnel doit être un nombre entier',
-            'any.required': 'L\'idPersonnel est obligatoire'
+        userId: Joi.number().integer().required().messages({
+            'number.base': 'Le visiteurId doit être un nombre entier',
+            'any.required': 'Le visiteurId est obligatoire'
         }),
         description: Joi.string().trim().required().messages({
             'string.base': 'Le description doit être une chaîne de caractères',

@@ -5,14 +5,13 @@ const {DataTypes} = sequelize
 
 const Cellule = database.define('cellule', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
     },
     numero: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        allowNull: false 
     },
     capaciteMax: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -23,7 +22,7 @@ const Cellule = database.define('cellule', {
         allowNull: false
     },
     statut: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false
     }
 })

@@ -1,4 +1,6 @@
 import Conge from "../models/conge.js"
+import Personnel from "../models/personnel.js"
+import User from "../models/user.js"
 import congesValidation from "../validations/congeValidations.js"
 import modifierCongeValidation from "../validations/modifierCongeValidation.js"
 
@@ -31,7 +33,14 @@ const getCongeByOneUser = (req, res) => {
 };
 
 const getAllConge = (req, res) => {
-    Conge.findAll()
+    Conge.findAll({
+        include: [
+            {
+                model: Personnel,
+                include: User, // Include the User model within the Personnel model
+            },
+        ],
+    })
     .then(data => {
         res.status(200).json(data);
     })
@@ -110,4 +119,46 @@ const congeEnCoursCount = (req, res) => {
     .catch(error => res.status(500).json(error));
 };
 
-export { createOneConge, getCongeByOneUser, getAllConge, getOneConge, updateConge, deleteConge, congeEnCoursCount }
+const updateCongeStatus = (req, res) => {
+    const { idConge } = req.params;
+
+    Conge.findByPk(idConge)
+        .then(conge => {
+            if (!conge) {
+                return res.status(404).json({ message: "Congé non trouvé." });
+            }
+
+            conge.status = 1;
+
+            conge.save()
+                .then(() => {
+                    res.status(200).json({ message: "Statut du congé mis à jour avec succès." });
+                })
+                .catch(error => res.status(500).json(error));
+        })
+        .catch(error => res.status(500).json(error));
+};
+
+const updateCongeStatusReff = (req, res) => {
+    const { idConge } = req.params;
+
+    Conge.findByPk(idConge)
+        .then(conge => {
+            if (!conge) {
+                return res.status(404).json({ message: "Congé non trouvé." });
+            }
+
+            conge.status = 2;
+
+            conge.save()
+                .then(() => {
+                    res.status(200).json({ message: "Statut du congé mis à jour avec succès." });
+                })
+                .catch(error => res.status(500).json(error));
+        })
+        .catch(error => res.status(500).json(error));
+};
+
+
+export { createOneConge, getCongeByOneUser, getAllConge, updateCongeStatus, updateCongeStatusReff
+    , getOneConge, updateConge, deleteConge, congeEnCoursCount }

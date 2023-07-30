@@ -106,4 +106,26 @@ async function updateDetenus(req, res) {
 }
 
 
-export { createOneDetenus, getAllDetenus, getAllDetenusCount, getOneDetenus, updateDetenus}
+async function setImageDetenus(req, res) {
+    const { idDetenus, image } = req.params;
+    
+    try {
+        const detenus = await Detenus.findByPk(idDetenus);
+
+        if (!detenus) {
+            return res.status(404).json({ message: "Detenus non trouvé." });
+        }
+
+        detenus.image = image + ".jpg";
+
+        await detenus.save();
+
+        return res.status(200).json({ message: "Image de la detenus mise à jour avec succès." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur lors de la mise à jour de l'image de la detenus." });
+    }
+}
+
+
+export { createOneDetenus, getAllDetenus, getAllDetenusCount, getOneDetenus, updateDetenus, setImageDetenus}

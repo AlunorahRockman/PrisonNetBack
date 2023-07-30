@@ -1,22 +1,28 @@
 import sequelize from "sequelize"
 import database from "../database/database.js"
+import User from "./user.js"
 
 const {DataTypes} = sequelize
 
 const Message = database.define('message', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
     },
     idSender: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
     },
     idRecever: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
     },
     message: {
         type: DataTypes.STRING,
@@ -28,6 +34,19 @@ const Message = database.define('message', {
         defaultValue: false
     }
 })
+
+
+User.hasMany(Message, {
+    foreignKey: 'idSender',
+    allowNull: false,
+})
+
+User.hasMany(Message, {
+    foreignKey: 'idRecever',
+    allowNull: false,
+})
+
+// Message.belongsTo(User);
 
 
 export default Message

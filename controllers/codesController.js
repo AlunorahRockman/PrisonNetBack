@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer';
 import faker from "faker"
 import User from "../models/user.js";
 import codeValidation from "../validations/codeValidation.js";
+import Personnel from "../models/personnel.js";
+import Conge from "../models/conge.js";
 
     const createCode = async (idUser) => {
         const code = faker.random.number({ min: 10000, max: 99999 });
@@ -88,4 +90,20 @@ import codeValidation from "../validations/codeValidation.js";
         }
     }
 
-export { createCode, verifierCode }
+    const getPersonnelWithConges = async (req, res) => {
+        
+        const personnelId = req.params.personnelId;
+    
+        try {
+            const personnel = await Personnel.findByPk(personnelId, { include: Conge });
+            if (!personnel) {
+                return res.status(404).json({ error: 'Personnel non trouvé' });
+            }
+            res.json(personnel);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Erreur lors de la récupération du personnel avec ses congés' });
+        }
+    };
+
+export { createCode, verifierCode, getPersonnelWithConges }

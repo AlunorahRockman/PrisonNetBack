@@ -2,7 +2,7 @@ import Joi from 'joi'
 
 const personnelsValidation = (body) => {
     const personnelsSchema = Joi.object({
-        idUser: Joi.number().precision(2).positive().required().messages({
+        userId: Joi.number().precision(2).positive().required().messages({
             'number.base': 'L\'identification doit être un nombre',
             'number.precision': 'L\'identification doit avoir une précision de 2 décimales',
             'number.positive': 'L\'identification doit être un nombre positif',

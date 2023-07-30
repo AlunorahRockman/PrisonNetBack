@@ -6,10 +6,9 @@ const { DataTypes } = sequelize;
 
 const User = database.define('users', {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false,
         },
         nom: {
             type: DataTypes.STRING,
@@ -69,5 +68,7 @@ const User = database.define('users', {
         const hashedPassword = await bcrypt.hash(user.motdepasse, saltRounds);
         user.motdepasse = hashedPassword;
     });
+
+    
 
 export default User;

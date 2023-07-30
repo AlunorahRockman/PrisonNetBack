@@ -1,24 +1,44 @@
-import sequelize from "sequelize"
-import database from "../database/database.js"
+import sequelize from "sequelize";
+import database from "../database/database.js";
+import Detenus from "./detenus.js";
+import Visiteur from "./visiteur.js";
 
-const {DataTypes} = sequelize
+const { DataTypes } = sequelize;
 
 const VisiteurDetenus = database.define('visiteur_detenus', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
     },
-    idVisiteur: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    idDetenus: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+    visiteurId: {
+        type: DataTypes.INTEGER, 
+        references: {
+            model: 'visiteurs',
+            key: 'id',
+        }
     }
-})
+});
+
+// ! ***********************************
+
+Detenus.hasOne(VisiteurDetenus, {
+    foreignKey: 'detenuId',
+    allowNull: false
+});
+
+VisiteurDetenus.belongsTo(Detenus);
 
 
-export default VisiteurDetenus
+// ! ***********************************
+
+Visiteur.hasMany(VisiteurDetenus, {
+    foreignKey: 'visiteurId',
+    allowNull: false
+});
+
+VisiteurDetenus.belongsTo(Visiteur);
+
+// ! ***********************************
+
+export default VisiteurDetenus;

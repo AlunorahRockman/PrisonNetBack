@@ -1,22 +1,15 @@
 import sequelize from "sequelize"
 import database from "../database/database.js"
+import Detenus from "./detenus.js"
+import Visiteur from "./visiteur.js"
 
 const {DataTypes} = sequelize
 
 const Visite = database.define('visite', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
-    },
-    idVisiteur: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    idDetenus: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
     },
     dateVisite: {
         type: DataTypes.DATE,
@@ -33,8 +26,36 @@ const Visite = database.define('visite', {
     statut: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
-    }
+    },
+    visiteurId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'visiteurs',
+            key: 'id',
+        },
+    } 
 })
+
+// ! ***********************************
+
+Visiteur.hasMany(Visite, {
+    foreignKey: 'visiteurId',
+    allowNull: false,
+    onDelete: 'CASCADE'
+})
+
+Visite.belongsTo(Visiteur);
+
+// ! ***********************************
+
+Detenus.hasOne(Visite, {
+    foreignKey: 'detenuId', 
+    allowNull: false
+}) 
+
+Visite.belongsTo(Detenus);
+
+// ! ***********************************
 
 
 export default Visite

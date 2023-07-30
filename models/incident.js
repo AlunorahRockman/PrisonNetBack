@@ -1,22 +1,16 @@
 import sequelize from "sequelize"
 import database from "../database/database.js"
+import Detenus from "./detenus.js"
+import Personnel from "./personnel.js"
+import User from "./user.js"
 
 const {DataTypes} = sequelize
 
 const Incident = database.define('incidents', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
-    },
-    idDetenus: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-    },
-    idPersonnel: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
     },
     description: {
         type: DataTypes.STRING,
@@ -29,8 +23,37 @@ const Incident = database.define('incidents', {
     statut: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
     }
-})
+}) 
 
+
+
+// ! ***********************************
+
+User.hasMany(Incident, {
+    foreignKey: 'userId',
+    allowNull: false,
+    onDelete: 'CASCADE'
+});
+
+Incident.belongsTo(User);
+
+// ! ***********************************
+
+Detenus.hasOne(Incident, {
+    foreignKey: 'detenuId',
+    allowNull: false
+});
+
+Incident.belongsTo(Detenus);
+
+// ! ***********************************
 
 export default Incident

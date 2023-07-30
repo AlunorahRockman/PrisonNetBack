@@ -3,6 +3,7 @@ import personnelsValidation from "../validations/personnelsValidation.js";
 import User from "../models/user.js";
 import modifierCongeValidation from "../validations/modifierCongeValidation.js";
 import modifierPersonnelValidation from "../validations/modifierPersonnelValidation.js";
+import Conge from "../models/conge.js";
 
 
 
@@ -18,16 +19,43 @@ const createOnePersonnel = (req, res) => {
     .catch(error => res.status(500).json(error))
 }
 
-const getAllPersonnelsUser = (req, res) => {
-    User.findAll({
-        where: {
-            typeCompte: "Personnel",
-        }
-    })
+const getAllPersonnelsSix = (req, res) => {
+    Personnel.findAll({
+        include: User,
+        order: [['id', 'DESC']],
+        limit: 6, 
+        })
         .then(personnels => {
             res.status(200).json(personnels);
         })
         .catch(error => res.status(500).json(error));
+};
+
+
+const getAllPersonnelsUser = (req, res) => {
+    Personnel.findAll({ include: User })
+        .then(personnels => {
+            res.status(200).json(personnels);
+        })
+        .catch(error => res.status(500).json(error));
+};
+
+const getPersonnelCongeByUser = (req, res) => {
+    const idUser = req.params.idUser;
+
+    Conge.findAll({
+        where: {
+            personnelId: idUser,
+        },
+        include: Personnel, 
+    })
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    });
 };
 
 const getAllPersonnelsCount = (req, res) => {
@@ -42,6 +70,7 @@ const getAllPersonnelsCount = (req, res) => {
     })
     .catch(error => res.status(500).json(error));
 };
+
 
 const getOnePersonnels = (req, res) => {
     const idUser = req.params.idUser;
@@ -58,7 +87,7 @@ const getPersonnelByOneUser = (req, res) => {
 
     Personnel.findAll({
         where: {
-            idUser: idUser,
+            userId: idUser,
         }
     })
     .then(data => {
@@ -107,4 +136,36 @@ async function updatePersonnel(req, res) {
 }
 
 
-export { createOnePersonnel, getAllPersonnelsUser, getAllPersonnelsCount, getOnePersonnels, getPersonnelByOneUser, updatePersonnel}
+const getIdPersonnelByUser = (req, res) => {
+    const idUser = req.params.idUser;
+
+    Personnel.findOne({
+        where: {
+            userId: idUser,
+        },        
+        include: Conge,
+    })
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch(error => res.status(500).json(error));
+};
+
+
+const getIdPersByUser = (req, res) => {
+    const idUser = req.params.idUser;
+
+    Personnel.findOne({
+        where: {
+            userId: idUser,
+        }
+    })
+    .then(result => {
+        res.status(200).json(result.id);
+    })
+    .catch(error => res.status(500).json(error));
+};
+
+export { createOnePersonnel, getAllPersonnelsUser, getPersonnelCongeByUser, getIdPersByUser,
+    getAllPersonnelsSix, getIdPersonnelByUser, getAllPersonnelsCount, getOnePersonnels,
+    getPersonnelByOneUser, updatePersonnel}

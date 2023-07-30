@@ -5,10 +5,9 @@ const {DataTypes} = sequelize
 
 const Detenus = database.define('detenus', { 
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER, 
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
     },
     nom: {
         type: DataTypes.STRING,
