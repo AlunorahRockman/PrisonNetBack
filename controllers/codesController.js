@@ -23,14 +23,14 @@ import Conge from "../models/conge.js";
 
     async function sendCodeByEmail(idUser, code) {
         try {
-            // Récupérer l'utilisateur par son ID
+            
             const user = await User.findByPk(idUser);
         
             if (!user) {
                 throw new Error('Utilisateur non trouvé');
             }
         
-            // Configurer le transporteur de messagerie
+            
             const transporter = nodemailer.createTransport({
                 service: 'Gmail',
                 auth: {
@@ -39,15 +39,16 @@ import Conge from "../models/conge.js";
                 },
             });
         
-            // Configurer l'e-mail
+            
             const mailOptions = {
                 from: 'ainatolotriniavo.a@zurcher.edu.mg',
-                to: user.email, // L'adresse e-mail de l'utilisateur
-                subject: 'Votre code de 5 chiffres',
-                text: `Bienvenue chez prisonNet. Votre code est : ${code}`,
+                to: user.email, 
+                subject: 'Votre code de vérification à 5 chiffres - Bienvenue chez PrisonNet',
+                text: `Cher utilisateur de PrisonNet,\n\nBienvenue sur notre plateforme ! Votre code de vérification à 5 chiffres est :<span style="font-weight: bold; color: orange;">${code}</span>. 
+                Ce code est essentiel pour garantir la sécurité de votre compte.\n\nNous sommes ravis de vous 
+                accueillir parmi nous et nous espérons que vous aurez une expérience agréable sur notre site.\n\nL'équipe PrisonNet`,
             };
         
-            // Envoyer l'e-mail
             transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error(error);

@@ -47,7 +47,7 @@ const User = database.define('users', {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        typeCompte: {
+        typeCompte: {  
             type: DataTypes.STRING,
             allowNull: false,
         },

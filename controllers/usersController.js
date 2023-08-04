@@ -11,6 +11,7 @@ import usersModifierValidation from "../validations/modifierUserValidation.js"
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import nouveauPassCompteValidation from "../validations/nouveauPassCompteValidation.js"
 
 
 dotenv.config({path:'.env'})
@@ -94,6 +95,12 @@ async function loginUser(req, res){
             if (!passMatch) {
                 return res.status(401).send("Mot de passe incorrect.");
             }
+
+            if (user.estBloque === true) {
+                return res.status(401).send("Votre compte est bloqué.");
+            }
+
+
             const accessToken = jwt.sign(
                 { id: user.id, nom: user.nom, prenom: user.prenom, email: user.email , type_compte:user.typeCompte, adresse: user.adresse, dateNaissance: user.dateNaissance, phone: user.phone, sexe: user.sexe, image: user.image},
                     process.env.ACCESS_SECRET,
@@ -283,7 +290,58 @@ const getOneUsers = (req, res) => {
 };
 
 
+const modifierMotdepasseCompte = async (req, res) => {
+        const { body } = req;
+        
+        const { error } = nouveauPassCompteValidation(body);
+        if (error) return res.status(401).json(error.details[0].message);
+
+        try {
+        const user = await User.findByPk(body.userId);
+
+        if (!user) {
+            return res.status(401).json("Utilisateur non trouvé.");
+        }
 
 
-export {createOneUser, loginUser, setImage ,validateUser, verifierEmail, getOneUsers, 
-    uploadImage, modifierMotdepasse, getAllUser, updateUser}
+        if (!await bcrypt.compare(body.motdepasseActuel, user.motdepasse)) {
+            return res.status(401).json("Mot de passe actuel incorrect!");
+        }
+
+        if (body.nouveauPass !== body.confirmPass) {
+            return res.status(401).json("Le mot de passe de confirmation doit correspondre au nouveau mot de passe.");
+        }
+
+        const hashedPassword = await bcrypt.hash(body.nouveauPass, 10);
+
+        user.motdepasse = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: "Le mot de passe a été modifié avec succès." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erreur du serveur." });
+    }
+};
+
+const bloqueUser = async (req, res) => {
+    const { idUser } = req.params;
+    
+    const user = await User.findByPk(idUser);
+
+    if (!user) {
+        return res.status(401).json("Utilisateur non trouvé.");
+    }
+
+    user.estBloque = user.estBloque === true ? false : true;
+    await user.save();
+
+    const action = user.estBloque === 1 ? "bloqué" : "débloqué";
+
+    return res.status(200).json({ message: `L'utilisateur a été ${action}!` });
+};
+
+
+
+export {createOneUser, loginUser, setImage ,validateUser, verifierEmail, getOneUsers, bloqueUser,
+    uploadImage, modifierMotdepasse, getAllUser, updateUser, modifierMotdepasseCompte}

@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { loginUser, createOneUser, validateUser, verifierEmail, modifierMotdepasse, 
-    getAllUser, updateUser, uploadImage, setImage, getOneUsers} from "../controllers/usersController.js"
+    getAllUser, updateUser, uploadImage, setImage, getOneUsers, modifierMotdepasseCompte, bloqueUser} from "../controllers/usersController.js"
 import { createOnePersonnel, getAllPersonnelsCount, getAllPersonnelsSix, 
     getAllPersonnelsUser, getIdPersByUser, getIdPersonnelByUser, getOnePersonnels, getPersonnelByOneUser, 
     getPersonnelCongeByUser, updatePersonnel } from "../controllers/personnelsController.js"
@@ -10,7 +10,7 @@ import { createOneCellule, deleteCellule, getAllCellule, getAllCelluleCount,
     updateCellule } from "../controllers/cellulesController.js"
 import { createCode, getPersonnelWithConges, verifierCode } from "../controllers/codesController.js"
 import { createCodeOublie, verifierCodeOublie } from "../controllers/codesOublieController.js"
-import { createOneMessage, getMessages } from "../controllers/messagesController.js"
+import { createOneMessage, getAllMessagesBetweenTwoUsers } from "../controllers/messagesController.js"
 import { createOneDetenus, getAllDetenus, getAllDetenusCount, getOneDetenus, setImageDetenus, 
     updateDetenus } from "../controllers/detenusController.js"
 import { createOneVisite, deleteVisite, getAllVisite, getMonVisite, getOneVisite, getVisiteByOneUser, 
@@ -22,8 +22,8 @@ import { createOneIncident, deleteIncident, getAllIncident, getIncidentByOneUser
     getOneIncident, updateIncident } from "../controllers/incidentsController.js"
 import { createOneVisiteurDetenus, getDetenusByOneUser, getIdVisiteurByUser, getMonDetenus, 
     getOneVisiteurs } from "../controllers/visiteurDetenusCotroller.js"
-import { createOneCelluleDetenus } from "../controllers/celluleDetenusController.js"
-import { createOneNotification } from "../controllers/notificationController.js"
+import { createOneCelluleDetenus, deleteDetenusCellule, getDetenusByOneCellule } from "../controllers/celluleDetenusController.js"
+import { createOneNotification, getNotificationByOneUser } from "../controllers/notificationController.js"
 
 const router = Router()
 
@@ -32,9 +32,16 @@ router.post('/loginUser', loginUser)
 router.post('/createOnePersonnel', createOnePersonnel)
 router.post('/createOneVisiteur', createOneVisiteur)
 router.post('/createOneAdmin', createOneAdmin)
+
+
 router.post('/createOneNotification', createOneNotification)
-router.post('/createOneCellule', createOneCellule)
+router.get('/getNotification/:idUser', getNotificationByOneUser)
+
 router.post('/createOneMessage', createOneMessage)
+router.get('/messages/:idRecever/:idSender', getAllMessagesBetweenTwoUsers);
+
+
+router.post('/createOneCellule', createOneCellule)
 router.post('/createOneVisite', createOneVisite)
 router.post('/createOneConge', createOneConge)
 router.post('/createOneDetenus', createOneDetenus)
@@ -45,6 +52,7 @@ router.post('/verifierCode', verifierCode)
 router.post('/verifierCodeOublie', verifierCodeOublie)
 router.post('/verifierEmail', verifierEmail)
 router.post('/modifierMotdepasse', modifierMotdepasse)
+router.post('/modifierMotdepasseCompte', modifierMotdepasseCompte)
 router.put('/validateUser/:idUser', validateUser)
 router.get('/personnels', getAllPersonnelsUser)
 router.get('/personnelsSix', getAllPersonnelsSix)
@@ -60,7 +68,6 @@ router.get('/getCelluleCount', getAllCelluleCount)
 router.get('/getAllConge', getAllConge)
 router.get('/getAllVisite', getAllVisite)
 router.get('/getAllIncident', getAllIncident)
-router.get('/messages/:idRecever/:idSender', getMessages);
 router.get('/getIncidentByOneUser/:idUser', getIncidentByOneUser)
 router.get('/getCongeByOneUser/:idUser', getCongeByOneUser)
 router.put('/updateUser/:userId', updateUser);
@@ -72,11 +79,13 @@ router.get('/getVisiteByOneUser/:idUser', getVisiteByOneUser)
 router.get('/getDetenusByOneUser/:id', getDetenusByOneUser)
 router.get('/getOneIncident/:idUser', getOneIncident)
 router.get('/getOneConge/:idUser', getOneConge)
+router.get('/getDetenusByOneCellule/:idCellule', getDetenusByOneCellule)
 router.get('/getOneUsers/:idUser', getOneUsers)
 router.get('/getOneVisite/:idUser', getOneVisite)
 router.delete('/deleteVisite/:id', deleteVisite)
 router.delete('/deleteConge/:id', deleteConge)
 router.delete('/deleteIncident/:id', deleteIncident)
+router.delete('/deleteDetenusCellule/:id', deleteDetenusCellule)
 router.get('/getOnePersonnels/:idUser', getOnePersonnels)
 router.get('/getMonDetenus/:idUser', getMonDetenus)
 router.get('/getMonVisite/:idUser', getMonVisite)
@@ -87,6 +96,9 @@ router.get('/getIdVisiteur/:idUser', getIdVisiteurByUser)
 router.get('/getPersonnelsByOneUser/:idUser', getPersonnelByOneUser)
 router.put('/updatePersonnel/:id', updatePersonnel)
 router.put('/updateDetenus/:id', updateDetenus)
+
+router.post('/bloque/:idUser', bloqueUser)
+
 router.put('/updateCellule/:id', updateCellule)
 router.get('/getOneDetenus/:id', getOneDetenus)
 router.delete('/deleteCellule/:id', deleteCellule)

@@ -10,13 +10,6 @@ const Notification = database.define('notification', {
         primaryKey: true,
         autoIncrement: true,
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
-    },
     link: {
         type: DataTypes.STRING, 
         allowNull: true, 
@@ -30,13 +23,17 @@ const Notification = database.define('notification', {
         allowNull: false,
         defaultValue: false,
     }
+}); 
+
+Notification.belongsTo(User, {
+    foreignKey: 'senderId',
+    as: 'senderNotif',
 });
 
-User.hasMany(Notification, {
-    foreignKey: 'userId',
-    allowNull: false,
-})
 
-Notification.belongsTo(User);
+Notification.belongsTo(User, {
+    foreignKey: 'receverId',
+    as: 'receiverNotif',
+});
 
 export default Notification;

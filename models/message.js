@@ -10,20 +10,6 @@ const Message = database.define('message', {
         primaryKey: true,
         autoIncrement: true,
     },
-    idSender: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
-    },
-    idRecever: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
-    },
     message: {
         type: DataTypes.STRING,
         allowNull: false
@@ -32,21 +18,19 @@ const Message = database.define('message', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
-    }
+    }  
 })
 
-
-User.hasMany(Message, {
+Message.belongsTo(User, {
     foreignKey: 'idSender',
-    allowNull: false,
-})
+    as: 'sender',
+});
 
-User.hasMany(Message, {
+
+Message.belongsTo(User, {
     foreignKey: 'idRecever',
-    allowNull: false,
-})
-
-// Message.belongsTo(User);
+    as: 'receiver',
+});
 
 
 export default Message

@@ -1,34 +1,64 @@
 import Message from "../models/message.js"
+import User from "../models/user.js"
+import sequelize from "sequelize";
+import database from "../database/database.js";
+
+const { Op } = sequelize; 
 
 
-const createOneMessage = (req, res) => {
-    const {body} = req
+const createOneMessage = async (req, res) => {
+    try {
 
-    Message.create({...body})
-    .then(() => {
-        res.status(201).json({msg: 'Created Ressource'})
-    })
-    .catch(error => res.status(500).json(error))
-}
+    const { idSender, idRecever, message, estVue } = req.body;
 
 
-    const getMessages = async (req, res) => {
-        const { idRecever, idSender } = req.params;
-    
-        try {
+    const newMessage = new Message({
+        idSender,
+        idRecever,
+        message,
+        estVue,
+    });
+
+    const savedMessage = await newMessage.save();
+
+    res.status(201).json(savedMessage);
+    } catch (error) {
+        console.error('Error creating message:', error);
+    }
+};
+
+const getAllMessagesBetweenTwoUsers = async (req, res) => {
+    const { idSender, idRecever } = req.params;
+
+    try {
         const messages = await Message.findAll({
             where: {
-                idRecever: idRecever,
-                idSender: idSender
-            }
+                [Op.or]: [
+                    { idSender: idSender, idRecever: idRecever },
+                    { idSender: idRecever, idRecever: idSender }
+                ]
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'sender',
+                    attributes: ['nom', 'email', 'image'] 
+                },
+                {
+                    model: User,
+                    as: 'receiver',
+                    attributes: ['nom', 'email', 'image']
+                }
+            ],
+            order: [['createdAt', 'desc']],
         });
-    
+
         res.json(messages);
-        } catch (error) {
-            console.error('Error retrieving messages:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    };
+    } catch (error) {
+        console.error('Error retrieving messages:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
-export { createOneMessage, getMessages}
+export { createOneMessage, getAllMessagesBetweenTwoUsers}
